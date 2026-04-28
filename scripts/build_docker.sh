@@ -1,20 +1,22 @@
 #!/bin/bash
-
-# 只要有一步出错立刻整个脚本退出执行
 set -e
 
 IMAGE_NAME=cm4-camera-builder:22.04
+APP_NAME=hello
 
-echo "[1/3] Building Docker image..."
+GREEN="\033[1;32m"
+BLUE="\033[1;34m"
+YELLOW="\033[1;33m"
+RED="\033[1;31m"
+PURPLE="\033[1;35m"
+NC="\033[0m"
+
+trap 'echo -e "${RED}❌ Build failed! Script stopped.${NC}"' ERR
+
+echo -e "${BLUE}🐳 [1/3] Building Docker image...${NC}"
 docker build -t ${IMAGE_NAME} .
 
-echo "[2/3] Building ARM64 executable inside Docker..."
-
-# --rm 容器使用完就删除
-# --user 使用当前用户的权限运行
-# -v "$PWD":/work  把当前目录挂载到容器的 /work
-# -w /work 容器启动后的工作目录就说/work
-# 然后执行以下bash
+echo -e "${YELLOW}🔧 [2/3] Building ARM64 executable inside Docker...${NC}"
 docker run --rm \
   --user "$(id -u):$(id -g)" \
   -v "$PWD":/work \
@@ -26,14 +28,8 @@ docker run --rm \
       -DCMAKE_TOOLCHAIN_FILE=toolchains/aarch64-linux-gnu.cmake
     cmake --build build -j
   "
-  # 上面这个是标准cmake，
-  # 先删除旧的build
-  # 用CMake配置项目
-  # 执行交叉编译toolchains/aarch64-linux-gnu.cmake
-  # 用ninja编译
 
-echo "[3/3] Checking output file..."
-# 输出这个可执行文件的架构
-file build/hello
+echo -e "${PURPLE}🔍 [3/3] Checking output file...${NC}"
+file build/${APP_NAME}
 
-echo "✔️Build finished."
+echo -e "${GREEN}✅ Build finished successfully.${NC}"
