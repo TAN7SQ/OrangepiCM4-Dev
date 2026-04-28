@@ -1,11 +1,8 @@
 #!/bin/bash
 set -e
 
-BOARD_USER=orangepi
-BOARD_IP=192.168.1.140
-REMOTE_DIR=/home/orangepi/App
-APP_NAME=hello
-LOG_FILE=${REMOTE_DIR}/${APP_NAME}.log
+# ===== 加载配置 =====
+source "$(dirname "$0")/config.sh"
 
 GREEN="\033[1;32m"
 BLUE="\033[1;34m"
@@ -26,10 +23,15 @@ echo -e "${YELLOW}🧹 [3/6] Cleaning old log...${NC}"
 ssh ${BOARD_USER}@${BOARD_IP} "rm -f ${LOG_FILE}"
 
 echo -e "${BLUE}📦 [4/6] Uploading executable...${NC}"
-rsync -avz build/${APP_NAME} ${BOARD_USER}@${BOARD_IP}:${REMOTE_DIR}/
+rsync -avz ${BUILD_DIR}/${APP_NAME} ${BOARD_USER}@${BOARD_IP}:${REMOTE_DIR}/
 
 echo -e "${GREEN}⚙️ [5/6] Starting app in background...${NC}"
-ssh ${BOARD_USER}@${BOARD_IP} "chmod +x ${REMOTE_DIR}/${APP_NAME} && nohup ${REMOTE_DIR}/${APP_NAME} > ${LOG_FILE} 2>&1 &"
+ssh ${BOARD_USER}@${BOARD_IP} "
+chmod +x ${REMOTE_DIR}/${APP_NAME}
+nohup ${REMOTE_DIR}/${APP_NAME} > ${LOG_FILE} 2>&1 &
+"
+echo -e "${BLUE}🔎 Checking if process is running...${NC}"
+ssh ${BOARD_USER}@${BOARD_IP} "pgrep -x ${APP_NAME} && echo '✅ Running' || echo '❌ Not running'"
 
 echo -e "${PURPLE}📜 [6/6] Tailing log from CM4... Press Ctrl+C to stop watching.${NC}"
 ssh ${BOARD_USER}@${BOARD_IP} "tail -f ${LOG_FILE}" || true

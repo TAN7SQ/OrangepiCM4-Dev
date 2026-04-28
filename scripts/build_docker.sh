@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-IMAGE_NAME=cm4-camera-builder:22.04
-APP_NAME=hello
+# 加载配置
+source "$(dirname "$0")/config.sh"
 
 GREEN="\033[1;32m"
 BLUE="\033[1;34m"
@@ -23,13 +23,14 @@ docker run --rm \
   -w /work \
   ${IMAGE_NAME} \
   bash -c "
-    rm -rf build
-    cmake -S . -B build -G Ninja \
-      -DCMAKE_TOOLCHAIN_FILE=toolchains/aarch64-linux-gnu.cmake
-    cmake --build build -j
+    rm -rf ${BUILD_DIR}
+    cmake -S . -B ${BUILD_DIR} -G ${CMAKE_GENERATOR} \
+      -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE} \
+      ${CMAKE_OPTIONS}
+    cmake --build ${BUILD_DIR} -j
   "
 
 echo -e "${PURPLE}🔍 [3/3] Checking output file...${NC}"
-file build/${APP_NAME}
+file ${BUILD_DIR}/${APP_NAME}
 
 echo -e "${GREEN}✅ Build finished successfully.${NC}"
