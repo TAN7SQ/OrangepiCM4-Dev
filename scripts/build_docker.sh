@@ -1,8 +1,12 @@
 #!/bin/bash
 set -e
 
-# 加载配置
-source "$(dirname "$0")/config.sh"
+# ===== 获取脚本目录和项目根目录 =====
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+# ===== 加载配置 =====
+source "${SCRIPT_DIR}/config.sh"
 
 GREEN="\033[1;32m"
 BLUE="\033[1;34m"

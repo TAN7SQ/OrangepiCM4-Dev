@@ -4,7 +4,8 @@
 IMAGE_NAME=cm4-camera-builder:22.04
 
 # ===== CMake / Build =====
-APP_NAME=hello
+APP_NAME=camera_ctl
+
 BUILD_DIR=build
 CMAKE_GENERATOR=Ninja
 TOOLCHAIN_FILE=toolchains/aarch64-linux-gnu.cmake

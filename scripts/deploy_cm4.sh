@@ -1,8 +1,12 @@
 #!/bin/bash
 set -e
 
+# ===== 获取脚本目录和项目根目录 =====
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
 # ===== 加载配置 =====
-source "$(dirname "$0")/config.sh"
+source "${SCRIPT_DIR}/config.sh"
 
 GREEN="\033[1;32m"
 BLUE="\033[1;34m"
@@ -12,6 +16,8 @@ PURPLE="\033[1;35m"
 NC="\033[0m"
 
 trap 'echo -e "${RED}❌ Error occurred! Script stopped.${NC}"' ERR
+
+LOCAL_APP="${PROJECT_ROOT}/${BUILD_DIR}/${APP_NAME}"
 
 echo -e "${BLUE}🚀 [1/6] Creating remote directory...${NC}"
 ssh ${BOARD_USER}@${BOARD_IP} "mkdir -p ${REMOTE_DIR}"
@@ -23,13 +29,14 @@ echo -e "${YELLOW}🧹 [3/6] Cleaning old log...${NC}"
 ssh ${BOARD_USER}@${BOARD_IP} "rm -f ${LOG_FILE}"
 
 echo -e "${BLUE}📦 [4/6] Uploading executable...${NC}"
-rsync -avz ${BUILD_DIR}/${APP_NAME} ${BOARD_USER}@${BOARD_IP}:${REMOTE_DIR}/
+rsync -avz "${LOCAL_APP}" ${BOARD_USER}@${BOARD_IP}:${REMOTE_DIR}/
 
 echo -e "${GREEN}⚙️ [5/6] Starting app in background...${NC}"
 ssh ${BOARD_USER}@${BOARD_IP} "
 chmod +x ${REMOTE_DIR}/${APP_NAME}
 nohup ${REMOTE_DIR}/${APP_NAME} > ${LOG_FILE} 2>&1 &
 "
+
 echo -e "${BLUE}🔎 Checking if process is running...${NC}"
 ssh ${BOARD_USER}@${BOARD_IP} "pgrep -x ${APP_NAME} && echo '✅ Running' || echo '❌ Not running'"
 
