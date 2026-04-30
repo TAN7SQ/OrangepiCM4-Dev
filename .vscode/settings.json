@@ -1,12 +1,11 @@
 {
-    "cmake.sourceDirectory": "/home/orangepi/App/PinyDart/src/vision_node",
-
-    "C_Cpp.intelliSenseEngine": "disabled",
-
-    "clangd.arguments": [
-        "--compile-commands-dir=/home/orangepi/App/PinyDart/build/vision_node",
-        "--background-index",
-        "--completion-style=detailed",
-        "--query-driver=/usr/bin/c++"
-    ]
+  "clangd.arguments": [
+    "--compile-commands-dir=/home/orangepi/App/PinyDart",
+    "--background-index",
+    "--completion-style=detailed",
+    "--query-driver=/usr/bin/c++"
+  ],
+  "C_Cpp.intelliSenseEngine": "disabled",
+  "editor.formatOnSave": true,
+  "cmake.sourceDirectory": "/home/orangepi/App/PinyDart/src/vision_node"
 }
