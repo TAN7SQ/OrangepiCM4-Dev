@@ -1,11 +1,27 @@
 {
+  // clangd 使用 colcon 生成的 compile_commands.json 做准确的 C++ 语义分析。
   "clangd.arguments": [
     "--compile-commands-dir=/home/orangepi/App/PinyDart",
     "--background-index",
-    "--completion-style=detailed",
-    "--query-driver=/usr/bin/c++"
+    "--completion-style=detailed"
   ],
+  // C/C++ 扩展保留 Tag Parser 作为补全/跳转兜底；真正语义诊断交给 clangd。
   "C_Cpp.intelliSenseEngine": "disabled",
+  "C_Cpp.errorSquiggles": "disabled",
+  "C_Cpp.default.compileCommands": "/home/orangepi/App/PinyDart/compile_commands.json",
+  "C_Cpp.default.cppStandard": "c++17",
+  "C_Cpp.default.intelliSenseMode": "linux-gcc-arm64",
+  "C_Cpp.default.includePath": [
+    "/home/orangepi/App/PinyDart/src/vision_node/include",
+    "/opt/ros/humble/include/**",
+    "/usr/include/opencv4",
+    "/usr/include/c++/11",
+    "/usr/include/aarch64-linux-gnu/c++/11",
+    "/usr/include/aarch64-linux-gnu",
+    "/usr/include"
+  ],
+  // 保存时自动格式化，格式规则来自仓库里的 .clang-format。
   "editor.formatOnSave": true,
+  // 指向实际的 ROS 2 包目录，方便 CMake 插件识别项目。
   "cmake.sourceDirectory": "/home/orangepi/App/PinyDart/src/vision_node"
 }

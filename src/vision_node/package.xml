@@ -1,14 +1,17 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
+  <!-- ROS 2 包名，需要和 CMakeLists.txt 里的 project 名称保持一致。 -->
   <name>vision_node</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="orangepi@todo.todo">orangepi</maintainer>
   <license>TODO: License declaration</license>
 
+  <!-- 使用 ament_cmake 构建 C++ ROS 2 包。 -->
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <!-- 运行节点、发布消息和处理图像需要的依赖。 -->
   <depend>rclcpp</depend>
   <depend>sensor_msgs</depend>
   <depend>geometry_msgs</depend>
@@ -20,6 +23,7 @@
   <test_depend>ament_lint_common</test_depend>
 
   <export>
+    <!-- 告诉 colcon/ament 这个包使用 ament_cmake 构建类型。 -->
     <build_type>ament_cmake</build_type>
   </export>
 </package>

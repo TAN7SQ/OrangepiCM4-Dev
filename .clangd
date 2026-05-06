@@ -1,0 +1,17 @@
+CompileFlags:
+  Add:
+    # 项目和未进 compile_commands.json 的头文件按 C++17 解析。
+    - -std=gnu++17
+    # 不依赖 clangd 的 query-driver 自动探测，显式补齐 Orange Pi 上的 GCC 11 标准库路径。
+    - -isystem
+    - /usr/include/c++/11
+    - -isystem
+    - /usr/include/aarch64-linux-gnu/c++/11
+    - -isystem
+    - /usr/include/c++/11/backward
+    - -isystem
+    - /usr/local/include
+    - -isystem
+    - /usr/include/aarch64-linux-gnu
+    - -isystem
+    - /usr/include

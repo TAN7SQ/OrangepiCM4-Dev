@@ -32,6 +32,7 @@ int V4L2Capture::xioctl(unsigned long request, void *arg)
 
 bool V4L2Capture::openCamera()
 {
+
     system("v4l2-ctl -d /dev/v4l-subdev0 --set-subdev-selection pad=0,target=crop,left=0,top=0,width=1920,height=1080");
     system("v4l2-ctl -d /dev/video0 --set-fmt-video=width=1920,height=1080,pixelformat=NV12");
 
@@ -174,14 +175,24 @@ bool V4L2Capture::readFrame(cv::Mat &bgr_frame)
     buf.length = VIDEO_MAX_PLANES;
     buf.m.planes = planes;
 
+    // DeQueue Buff,取出一个缓冲区
     if (xioctl(VIDIOC_DQBUF, &buf) < 0) {
         perror("VIDIOC_DQBUF");
         return false;
     }
 
+    // 零拷贝构造，用Mat指针指向V4l2的内存
+    /*
+    以下是NV12的内存排布，总大小是  height * width * 1.5
+    YYYYYYYYYYYY      ← Y（亮度）  height × width
+    UVUVUVUVUVUV      ← UV（色度） height/2 × width
+    */
+    // 这里CV_8UC1是8位无符号单通道，以为NV12在内存中是“一整块字节流”
     cv::Mat nv12(height_ * 3 / 2, width_, CV_8UC1, buffers_[buf.index].start);
+    // 摄像头输出NV12（YUV），Opencv要用BGR
     cv::cvtColor(nv12, bgr_frame, cv::COLOR_YUV2BGR_NV12);
 
+    // 把buffer放回队列
     if (xioctl(VIDIOC_QBUF, &buf) < 0) {
         perror("VIDIOC_QBUF return");
         return false;
