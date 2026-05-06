@@ -1,1 +1,0 @@
-/home/orangepi/App/PinyDart/build/vision_node/ament_cmake_core/vision_nodeConfig.cmake
